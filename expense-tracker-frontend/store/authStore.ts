@@ -1,4 +1,4 @@
-import  {create}  from 'zustand';
+import { create } from 'zustand';
 import apiClient from '@/utils/api';
 import { AxiosError } from 'axios';
 
@@ -15,7 +15,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  
+
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => void;
@@ -124,10 +124,17 @@ export function saveSession(token: string, user: User): void {
 }
 
 export function saveDevelopmentSession(fullName: string, email: string): void {
+  const devUser: User = {
+    id: 'dev-user',
+    email: email || 'dev@example.com',
+    fullName: fullName || 'Development User',
+  };
+
+  if (typeof window !== 'undefined') {
     localStorage.setItem('accessToken', 'dev-token');
     localStorage.setItem('user', JSON.stringify(devUser));
   }
-
+}
 
 export function getStoredUser(): User | null {
   if (typeof window !== 'undefined') {

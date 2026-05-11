@@ -2,64 +2,149 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
-import { authApi } from '@/utils/api';
-import { saveDevelopmentSession, saveSession } from '@/store/authStore';
+import { useState } from 'react';
+import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { login, isLoading } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError('');
-    setLoading(true);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    const form = new FormData(event.currentTarget);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
 
     try {
-      const response = await authApi.login(
-        String(form.get('email') || ''),
-        String(form.get('password') || '')
-      );
-      saveSession(response.data.token, response.data.user);
+      await login(formData.email, formData.password);
+      toast.success('Login successful!');
       router.push('/dashboard');
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        saveDevelopmentSession('', String(form.get('email') || 'dev@example.com'));
-        router.push('/dashboard');
-        return;
-      }
-
-      setError(err instanceof Error ? err.message : 'Unable to log in');
-    } finally {
-      setLoading(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Login failed');
     }
-  }
+  };
 
   return (
-    <main className="auth-page">
-      <section className="auth-panel">
-        <h1>Log in</h1>
-        <form className="form" onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Email</span>
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <label className="field">
-            <span>Password</span>
-            <input name="password" type="password" autoComplete="current-password" required />
-          </label>
-          {error ? <p className="error">{error}</p> : null}
-          <button className="primary" type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log in'}
-          </button>
-        </form>
-        <p className="muted">
-          Need an account? <Link href="/auth/signup">Sign up</Link>
-        </p>
-      </section>
-    </main>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            💰 Expense Tracker
+          </h1>
+          <p className="text-gray-600">Welcome back!</p>
+        </div>
+
+        {/* Form Card */}
+        <div className="card">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  disabled={isLoading}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full btn btn-primary py-3 font-medium disabled:opacity-50"
+            >
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="my-6 flex items-center gap-3">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="text-gray-500 text-sm">or</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-gray-600">
+            Don't have an account?{' '}
+            <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
+              Sign up
+            </Link>
+          </p>
+
+          {/* Forgot Password Link */}
+          <div className="text-center mt-4">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </div>
+
+        {/* Demo Account Info */}
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-900">
+            <strong>Demo Account:</strong>
+            <br />
+            Email: demo@example.com
+            <br />
+            Password: demo123456
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
