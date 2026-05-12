@@ -155,7 +155,7 @@ export default function SignUpPage() {
 
               className="w-full btn btn-primary py-3 font-medium disabled:opacity-50 mt-6"
             >
-
+              Create Account
             </button>
           </form>
 

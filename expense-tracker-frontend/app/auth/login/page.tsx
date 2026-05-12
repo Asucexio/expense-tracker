@@ -110,7 +110,7 @@ export default function LoginPage() {
 
               className="w-full btn btn-primary py-3 font-medium disabled:opacity-50"
             >
-
+              Sign In
             </button>
           </form>
 
