@@ -1,4 +1,4 @@
- import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -20,55 +20,45 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor to handle unauthorized responses
+// Interceptor to handle token refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      window.location.href = '/auth/login';
+    const originalRequest = error.config as any;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        if (typeof window !== 'undefined') {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token');
+          }
+
+          const response = await axios.post(`${API_URL}/auth/refresh-token`, {
+            refreshToken,
+          });
+
+          const { accessToken, refreshToken: newRefreshToken } = response.data.data.tokens;
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
+
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return apiClient(originalRequest);
+        }
+      } catch (refreshError) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/auth/login';
+        }
+        return Promise.reject(refreshError);
+      }
     }
 
     return Promise.reject(error);
   }
 );
-
-// Generic API request function with TypeScript support
-export async function apiRequest<T = unknown>(
-  url: string,
-  options?: {
-    method?: string;
-    data?: unknown;
-    token?: string;
-  }
-): Promise<{ data: T }> {
-  const config: AxiosRequestConfig = {
-    method: options?.method || 'GET',
-    url,
-  };
-
-  if (options?.data) {
-    config.data = options.data;
-  }
-
-  if (options?.token) {
-    config.headers = {
-      Authorization: `Bearer ${options.token}`,
-    };
-  }
-
-  return apiClient(config);
-}
-
-// Auth API with login and signup methods
-export const authApi = {
-  login: async (email: string, password: string) => {
-    return apiClient.post('/auth/login', { email, password });
-  },
-  signup: async (fullName: string, email: string, password: string) => {
-    return apiClient.post('/auth/register', { email, password, fullName });
-  },
-};
 
 export default apiClient;

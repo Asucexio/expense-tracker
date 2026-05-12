@@ -196,7 +196,9 @@ const getSummary = async (req, res) => {
         LEFT JOIN expenses e ON b.category_id = e.category_id 
           AND e.user_id = $1 
           AND DATE_TRUNC('month', e.date) = DATE_TRUNC('month', b.month_year::date)
-        WHERE b.user_id = $1 AND DATE_TRUNC('month', b.month_year::date) = DATE_TRUNC('month', CURRENT_DATE)
+        WHERE b.user_id = $1 
+          AND b.is_active = true 
+          AND DATE_TRUNC('month', b.month_year::date) = DATE_TRUNC('month', CURRENT_DATE)
         GROUP BY b.id, b.monthly_limit
        ) as budget_data`,
       [userId]

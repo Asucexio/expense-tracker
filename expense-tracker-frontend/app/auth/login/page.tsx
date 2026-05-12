@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,10 +43,15 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            💰 Expense Tracker
-          </h1>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <Image
+            src="/vaulto-logo-dark.svg"
+            alt="vaulto"
+            width={200}
+            height={200}
+            priority
+            className="hover:scale-105 transition-transform duration-300"
+          />
           <p className="text-gray-600">Welcome back!</p>
         </div>
 
@@ -127,23 +133,14 @@ export default function LoginPage() {
           <div className="text-center mt-4">
             <Link
               href="/auth/forgot-password"
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-blue-600 hover:underline font-medium"
             >
               Forgot password?
             </Link>
           </div>
         </div>
 
-        {/* Demo Account Info */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-900">
-            <strong>Demo Account:</strong>
-            <br />
-            Email: demo@example.com
-            <br />
-            Password: demo123456
-          </p>
-        </div>
+
       </div>
     </div>
   );

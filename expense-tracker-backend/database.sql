@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
   is_email_verified BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  reset_password_token VARCHAR(255),
+  reset_password_expires TIMESTAMP,
   CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$')
 );
 
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS budgets (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   category_id UUID NOT NULL REFERENCES expense_categories(id) ON DELETE RESTRICT,
   monthly_limit DECIMAL(12, 2) NOT NULL,
-  alert_threshold DECIMAL(3, 2) DEFAULT 80,
+  alert_threshold DECIMAL(5, 2) DEFAULT 80,
   month_year DATE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

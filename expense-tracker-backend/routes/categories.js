@@ -9,8 +9,10 @@ const {
 
 const router = express.Router();
 
+// All routes require authentication
 router.use(authMiddleware);
 
+// Routes
 router.get('/', getCategories);
 router.post('/', createCategory);
 router.put('/:id', updateCategory);

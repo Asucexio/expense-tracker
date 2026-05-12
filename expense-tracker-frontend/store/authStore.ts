@@ -33,10 +33,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await apiClient.post('/auth/login', { email, password });
-      const { user, token } = response.data.data;
+      const { user, tokens } = response.data.data;
 
       if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem('accessToken', tokens.accessToken);
+        localStorage.setItem('refreshToken', tokens.refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
       }
 
@@ -59,10 +60,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         password,
         fullName,
       });
-      const { user, token } = response.data.data;
+      const { user, tokens } = response.data.data;
 
       if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem('accessToken', tokens.accessToken);
+        localStorage.setItem('refreshToken', tokens.refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
       }
 

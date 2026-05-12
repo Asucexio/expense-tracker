@@ -7,6 +7,7 @@ const expenseRoutes = require('./routes/expenses');
 const budgetRoutes = require('./routes/budgets');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/users');
+const pool = require('./config/database');
 
 const app = express();
 
@@ -52,10 +53,10 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
+
   const status = err.status || 500;
   const message = err.message || 'Internal server error';
-  
+
   res.status(status).json({
     success: false,
     message,
@@ -66,9 +67,8 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`
+app.listen(PORT, () => {
+  console.log(`
 ╔════════════════════════════════════════╗
 ║     Expense Tracker API Server         ║
 ╠════════════════════════════════════════╣
@@ -77,7 +77,7 @@ if (require.main === module) {
 ║ Time: ${new Date().toLocaleTimeString().padEnd(30)} ║
 ╚════════════════════════════════════════╝
   `);
-  });
-}
+});
+
 
 module.exports = app;

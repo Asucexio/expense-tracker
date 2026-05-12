@@ -1,20 +1,26 @@
 const express = require('express');
 const authMiddleware = require('../middleware/auth');
 const {
+  createExpense,
   getExpenses,
   getExpense,
-  createExpense,
   updateExpense,
   deleteExpense,
+  getStats,
 } = require('../controllers/expenseController');
 
 const router = express.Router();
 
+// All routes require authentication
 router.use(authMiddleware);
 
+// Statistics route
+router.get('/stats/summary', getStats);
+
+// CRUD routes
+router.post('/', createExpense);
 router.get('/', getExpenses);
 router.get('/:id', getExpense);
-router.post('/', createExpense);
 router.put('/:id', updateExpense);
 router.delete('/:id', deleteExpense);
 

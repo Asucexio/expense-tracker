@@ -1,4 +1,4 @@
- const express = require('express');
+const express = require('express');
 const authMiddleware = require('../middleware/auth');
 const {
   getProfile,
@@ -18,4 +18,4 @@ router.get('/summary/dashboard', getSummary);
 router.put('/profile', updateProfile);
 router.post('/password/change', changePassword);
 
-module.exports =router;
+module.exports = router;

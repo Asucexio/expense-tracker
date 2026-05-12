@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -54,10 +55,15 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            💰 Expense Tracker
-          </h1>
+        <div className="flex flex-col items-center mb-8">
+          <Image
+            src="/vaulto-logo-dark.svg"
+            alt="vaulto"
+            width={200}
+            height={200}
+            priority
+            className="hover:scale-105 transition-transform duration-300"
+          />
           <p className="text-gray-600">Create your account</p>
         </div>
 
@@ -74,8 +80,8 @@ export default function SignUpPage() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="John Doe"
-                disabled={isLoading}
+                placeholder="Enter your full name"
+                className='rounded-full'
                 required
               />
             </div>
@@ -90,8 +96,8 @@ export default function SignUpPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                disabled={isLoading}
+                placeholder="Enter your email"
+                className='rounded-full'
                 required
               />
             </div>
@@ -108,14 +114,14 @@ export default function SignUpPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  disabled={isLoading}
+
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                  disabled={isLoading}
+
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -138,7 +144,7 @@ export default function SignUpPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="••••••••"
-                disabled={isLoading}
+
                 required
               />
             </div>
@@ -146,10 +152,10 @@ export default function SignUpPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+
               className="w-full btn btn-primary py-3 font-medium disabled:opacity-50 mt-6"
             >
-              {isLoading ? 'Creating account...' : 'Create Account'}
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
