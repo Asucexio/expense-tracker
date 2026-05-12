@@ -10,7 +10,7 @@ import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading } = useAuthStore();
+  const { login } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -69,7 +69,7 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                disabled={isLoading}
+
                 required
               />
             </div>
@@ -86,14 +86,14 @@ export default function LoginPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  disabled={isLoading}
+
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                  disabled={isLoading}
+
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -107,10 +107,10 @@ export default function LoginPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+
               className="w-full btn btn-primary py-3 font-medium disabled:opacity-50"
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+
             </button>
           </form>
 

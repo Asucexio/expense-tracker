@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { register, isLoading } = useAuthStore();
+  const { register } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -155,7 +155,7 @@ export default function SignUpPage() {
 
               className="w-full btn btn-primary py-3 font-medium disabled:opacity-50 mt-6"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+
             </button>
           </form>
 
