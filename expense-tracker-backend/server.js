@@ -12,8 +12,20 @@ const pool = require('./config/database');
 const app = express();
 
 // CORS Configuration
+// server.js
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://expense-tracker-lilac-nine-36.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // allow Postman / server-to-server (no origin)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
