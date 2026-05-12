@@ -1,14 +1,14 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import apiClient from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import Image from "next/image"
+import Image from "next/image";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
@@ -135,6 +135,7 @@ export default function ResetPasswordPage() {
                                 onChange={handleChange}
                                 placeholder="••••••••"
                                 disabled={loading}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                 required
                             />
                             <p className="text-xs text-gray-500 mt-1">At least 6 characters</p>
@@ -153,6 +154,7 @@ export default function ResetPasswordPage() {
                                     onChange={handleChange}
                                     placeholder="••••••••"
                                     disabled={loading}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     required
                                 />
                                 <button
@@ -200,5 +202,17 @@ export default function ResetPasswordPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+        }>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }
